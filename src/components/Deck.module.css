@@ -1,0 +1,12 @@
+.cardContainer {
+    display: flex;
+    width: 100%;
+}
+
+.activeDeck {
+    border: 2px solid #0000ee;
+}
+
+.inactiveDeck {
+    border: 2px solid rgba(0, 0, 0, 0);
+}
