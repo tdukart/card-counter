@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import AppNavbar from "./components/AppNavbar";
-import { Container } from "reactstrap";
+import AppNavbar from './components/AppNavbar';
+import { Container } from 'reactstrap';
 import Mousetrap from 'mousetrap';
 import produce from 'immer';
-import { clamp } from 'lodash';
+import { clamp, isNumber } from 'lodash';
 
 import cardRanks from './data/cardRanks';
-import Deck from "./components/Deck";
+import Deck from './components/Deck';
 
 class App extends Component {
   state = {
@@ -23,21 +23,26 @@ class App extends Component {
     activeDeck: 0,
   };
 
+  incrementCount = (rank, deck = null) => {
+    this.setState(produce(draft => {
+      const index = cardRanks.indexOf(rank);
+      if (!index) return;
+      const activeDeck = isNumber(deck) ? deck : draft.activeDeck;
+      draft.decks[activeDeck].cardCounts[index] = clamp(draft.decks[activeDeck].cardCounts[index] + 1, 0, 4);
+      draft.decks[activeDeck].lastCard = rank;
+    }));
+  };
+
   componentDidMount() {
-    cardRanks.forEach((rank, index) => {
-      Mousetrap.bind(rank.substr(-1, 1).toLowerCase(), () => {
-        this.setState(produce(draft => {
-          draft.decks[draft.activeDeck].cardCounts[index] = clamp(draft.decks[draft.activeDeck].cardCounts[index] + 1, 0, 4);
-          draft.decks[draft.activeDeck].lastCard = rank;
-        }));
-      })
+    cardRanks.forEach((rank) => {
+      Mousetrap.bind(rank.substr(-1, 1).toLowerCase(), () => this.incrementCount(rank))
     });
 
     Mousetrap.bind('s', () => {
       this.setState(produce(draft => {
         draft.activeDeck = (draft.activeDeck + 1) % (draft.decks.length)
       }));
-    })
+    });
 
     Mousetrap.bind('r', () => {
       this.setState({
@@ -63,7 +68,13 @@ class App extends Component {
         <AppNavbar />
         <Container>
           {decks.map(({ cardCounts, lastCard }, index) => (
-            <Deck key={index} cardCounts={cardCounts} lastCard={lastCard} active={index === activeDeck} />
+            <Deck
+              key={index}
+              cardCounts={cardCounts}
+              lastCard={lastCard}
+              active={index === activeDeck}
+              onCardClick={(rank) => this.incrementCount(rank, index)}
+            />
           ))}
         </Container>
       </div>

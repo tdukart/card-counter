@@ -13,7 +13,7 @@ const probabilitySentences = {
   noCard: '',
 };
 
-const Deck = ({ active, lastCard, cardCounts }) => {
+const Deck = ({ active, lastCard, cardCounts, onCardClick }) => {
   const probability = nextCardProbability(lastCard, cardCounts);
   const average = deckAverage(cardCounts);
 
@@ -26,6 +26,7 @@ const Deck = ({ active, lastCard, cardCounts }) => {
             rank={rank}
             highlight={rank === lastCard}
             count={cardCounts[index]}
+            onClick={() => onCardClick(rank)}
           />
         ))}
       </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Card.module.css';
 
-const Card = ({ rank, highlight, count }) => {
+const Card = ({ rank, highlight, count, onClick }) => {
 
   const lights = [1, 2, 3, 4].map(lightIndex => (
     <div
@@ -11,9 +11,11 @@ const Card = ({ rank, highlight, count }) => {
     />
   ));
 
-
   return (
-    <div className={styles.card + ' ' + (highlight ? styles.lastCard : '')}>
+    <div
+      className={styles.card + ' ' + (highlight ? styles.lastCard : '')}
+      onClick={onClick}
+    >
       <p className={styles.rank}>{rank}</p>
       <div className={styles.cardCounter}>
         {lights}
